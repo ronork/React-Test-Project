@@ -5,22 +5,29 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server",
+    "start": "nodemon server server",
     "dev-build": "webpack --mode development --watch",
     "build": "webpack --mode production"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/register": "^7.10.5",
     "antd": "^4.5.4",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "express": "^4.17.1",
+    "graphql": "^15.3.0",
+    "graphqlhub-schemas": "^0.1.0",
     "nodemon": "^2.0.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-infinite-scroller": "^1.2.4",
     "react-redux": "^7.2.1",
-    "redux": "^4.0.5"
+    "redux": "^4.0.5",
+    "request": "^2.88.2",
+    "reqwest": "^2.0.5",
+    "webpack-graphql-loader": "^1.0.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.11.0",

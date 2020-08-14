@@ -1,3 +1,7 @@
+require('@babel/register')({
+    presets: ['@babel/react', '@babel/preset-env']
+});
+
 const cors = require('cors')
 const compression = require('compression')
 const express = require('express');
@@ -16,6 +20,7 @@ app.all('*', (req, res) => res.send(`
 <html>
 
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Reddit Posts</title>
 </head>
 

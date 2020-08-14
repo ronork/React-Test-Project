@@ -1,6 +1,5 @@
 import React from 'react';
 import Posts from '../modules/Posts/components/Main';
-import NoMatch from '../modules/NoMatch/main';
 import {
     BrowserRouter as Router,
     Switch,
@@ -18,9 +17,6 @@ export default function AppRouter() {
             <Switch>
                 <Route exact path="/posts">
                     <Posts />
-                </Route>
-                <Route path="*">
-                    <NoMatch />
                 </Route>
             </Switch>
         </Router>

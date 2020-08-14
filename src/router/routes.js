@@ -1,5 +1,5 @@
 import React from 'react';
-import Posts from '../modules/Posts/components/listing';
+import Posts from '../modules/Posts/components/Main';
 import NoMatch from '../modules/NoMatch/main';
 import {
     BrowserRouter as Router,

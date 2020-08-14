@@ -1,29 +1,51 @@
 import React, { useEffect, useState } from 'react';
-import { List, Avatar, Button, Skeleton, Spin as Spinner } from 'antd';
+import { List, Select, Input, Avatar, Button, Skeleton, Spin as Spinner, Row, Col } from 'antd';
 import { Layout } from 'antd';
 import 'antd/dist/antd.css';
-// or 'antd/dist/antd.less'
-
 const { Header, Content, Footer } = Layout;
 import constants from '../../utility/constants';
-import InfiniteScroll from 'react-infinite-scroller';
-
-
-
+import { Link, useLocation } from 'react-router-dom'
+const { Option } = Select
+const { Search } = Input;
+import { useHistory } from "react-router-dom";
 
 
 export default function listing() {
+    const history = useHistory();
+    const location = useLocation();
 
-    const [redditPosts, updateData] = useState([])
-    const [isFetching, toggleFetching] = useState('NF')
+    const genLocationParams = () => {
+        let params = (new URL(document.location)).searchParams
 
-    async function fetchRes(after = "") {
-        console.log(after);
+        return {
+            'cat': params.get('cat'),
+            'time': params.get('time'),
+            'search': params.get('search')
+        };
+    }
+    // let history = useHistory();
+    useEffect(() => {
+        let locParams = genLocationParams();
+        toggleFetching("F");
+        fetchRes("", "locChange", locParams)
+        updateLocParams(locParams);
+    }, [location])
+
+
+    const [redditPosts, updateData] = useState([]);
+    const [isFetching, toggleFetching] = useState('NF');
+
+    const [locationParams, updateLocParams] = useState(genLocationParams())
+
+    const [selectedCat, toggleCat] = useState('new')
+
+    async function fetchRes(after = "", type = "autofetch", locParams = "") {
+        let { search, time, cat } = type == "autofetch" ? locationParams : locParams
         let query = `{
             graphQLHub
             reddit {
-              subreddit(name: "posts") {
-                newListings(limit: 10 ${after ? ',after: "' + after + '"' : ''}) {
+              subreddit(name: "${search}") {
+                ${cat}Listings(limit: 10 ${after ? ',after: "' + after + '"' : ''} ${time ? ',timeInterval:' + time : ''}) {
                  fullnameId
                   title
                   author {
@@ -36,34 +58,49 @@ export default function listing() {
             }
           }
           `;
-        console.log(query);
 
         try {
             const response = await fetch(constants.apiUrl + query)
             const data = await response.json();
             let parsedData = []
-            data.data.reddit.subreddit.newListings.map((item) => { if (item && item.fullnameId) parsedData.push(item) })
-            console.log(parsedData);
-            updateData([...redditPosts, ...parsedData]);
+            data.data.reddit.subreddit[`${cat}Listings`].map((item) => { if (item && item.fullnameId) parsedData.push(item) })
+
+            type == "autofetch" ? updateData([...redditPosts, ...parsedData]) : updateData(parsedData);
         }
         catch (e) {
-            console.log(e);
-            toggleFetching('F')
+
+            if (type == "locChange")
+                updateData([])
+
+            toggleFetching('NF')
         }
 
     }
 
+    console.log(locationParams);
+
     function handleScroll(e) {
-        if ((window.innerHeight + window.scrollY + 100) >= document.body.scrollHeight && (isFetching == 'NF' || isFetching == 'D')) {
-            toggleFetching('F');
+        if ((window.innerHeight + window.scrollY + 100) >= document.body.scrollHeight && isFetching == 'NF') {
+            toggleFetching('AF');
             fetchRes(redditPosts[redditPosts.length - 1].fullnameId);
-            console.log("END REACHED");
         }
+    }
+
+    const handleSelect = (e, type = "cat") => {
+        console.log(e);
+        let { search, time, cat } = genLocationParams();
+
+        if (type == "cat" && !(e == "top" || e == "controversial")) {
+            time = '';
+        }
+
+
+        history.push(`/posts?cat=${type == "cat" ? e : cat}&search=${type == "search" ? e : search}${type == "time" ? '&time=' + e : time ? '&time=' + time : ''}`)
     }
 
     useEffect(() => {
 
-        if (isFetching == "F")
+        if (isFetching == "F" || isFetching == "AF")
             toggleFetching("NF");
     }, [redditPosts])
 
@@ -77,21 +114,40 @@ export default function listing() {
 
     }, [isFetching, redditPosts])
 
-    useEffect(() => {
-        fetchRes();
-    }, [])
-
 
     return (<>
         <Layout className="layout" style={{ background: "white" }} >
             <Header style={{ background: constants.colors.blue }}>
                 <h2 style={{ textAlign: "center" }}>Reddit Posts</h2>
             </Header>
+
+            <Row style={{ margin: "10px" }}>
+                <Col flex={8} style={{ textAlign: 'center', padding: "5px" }}>
+                    <Select value={locationParams.cat} style={{ width: 120 }} onSelect={(e) => { handleSelect(e, "cat") }}>
+                        <Option value="hot">Hot</Option>
+                        <Option value="top">Top</Option>
+                        <Option value="rising">Rising</Option>
+                        <Option value="controversial">Controversial</Option>
+                        <Option value="new">New</Option>
+                    </Select>
+                </Col>
+                <Col flex={8} style={{ padding: "5px" }}>
+                    <Search onChange={(e) => { updateLocParams({ ...locationParams, ...{ search: e.target.value } }) }} value={locationParams.search} placeholder="Search Something" onSearch={value => handleSelect(value, "search")} enterButton />
+                </Col>
+                <Col flex={8} style={{ textAlign: "center", padding: "5px" }}>
+                    <Select disabled={!(locationParams.cat == "controversial" || locationParams.cat == "top")} onSelect={(e) => { handleSelect(e, "time") }} value={locationParams.time ? locationParams.time : "Time"} style={{ width: 120 }}>
+                        <Option value="hour">Hour ago</Option>
+                        <Option value="day">Day ago</Option>
+                        <Option value="week">Week Ago</Option>
+                        <Option value="month">Month Ago</Option>
+                    </Select>
+                </Col>
+
+            </Row>
+
             <Content style={{ padding: '0 10px' }}>
 
-                {redditPosts.length != 0 ?
-
-
+                {isFetching == "NF" || isFetching == "AF" ?
                     <List
                         dataSource={redditPosts}
 
@@ -118,20 +174,21 @@ export default function listing() {
                         }}
                     >
                     </List>
-                    :
-                    <Spinner style={{
-                        position: "fixed",
-                        right: "0",
-                        left: "0",
-                        bottom: "0",
-                        width: "30px",
-                        height: "30px",
-                        top: "0",
-                        margin: "auto"
-                    }} />}
+                    : null}
+
+                {isFetching == "F" ? <Spinner style={{
+                    position: "fixed",
+                    right: "0",
+                    left: "0",
+                    bottom: "0",
+                    width: "30px",
+                    height: "30px",
+                    top: "0",
+                    margin: "auto"
+                }} /> : null}
 
 
-                {isFetching == "F" ?
+                {isFetching == "AF" ?
                     <Spinner style={{
                         position: "absolute",
                         right: "0",

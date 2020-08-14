@@ -8,12 +8,15 @@ import {
 } from "react-router-dom";
 
 
+import { createBrowserHistory } from "history";
+
+const history = createBrowserHistory();
 
 export default function AppRouter() {
     return (
-        <Router>
+        <Router history={history}>
             <Switch>
-                <Route exact path="/">
+                <Route exact path="/posts">
                     <Posts />
                 </Route>
                 <Route path="*">

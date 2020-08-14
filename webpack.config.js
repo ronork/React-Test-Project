@@ -1,6 +1,6 @@
-const webpack = require('webpack');
 
-var path = require('path'); // to use path.join
+var path = require('path');
+// to use path.join
 module.exports = {
     entry: './src/index.js',
     output: {
@@ -13,25 +13,5 @@ module.exports = {
             { test: /\.css$/, use: ['style-loader', 'css-loader'] }
         ]
 
-    },
-    devtool: 'eval-cheap-module-source-map',
-    devServer: {
-        contentBase: __dirname,
-        publicPath: '/'
-        // contentBase: 'dist'
-    },
-    node: {
-        child_process: 'empty',
-        fs: 'empty',
-        crypto: 'empty',
-        net: 'empty',
-        tls: 'empty',
-        console: true
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': JSON.stringify('DEV')
-            // Definitions...
-        })
-    ]
+    }
 }

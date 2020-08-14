@@ -1,7 +1,3 @@
-require('@babel/register')({
-    presets: ['@babel/react', '@babel/preset-env']
-});
-
 const cors = require('cors')
 const compression = require('compression')
 const express = require('express');

@@ -76,9 +76,6 @@ export default function listing() {
         }
 
     }
-
-    console.log(locationParams);
-
     function handleScroll(e) {
         if ((window.innerHeight + window.scrollY + 100) >= document.body.scrollHeight && isFetching == 'NF') {
             toggleFetching('AF');
@@ -87,7 +84,6 @@ export default function listing() {
     }
 
     const handleSelect = (e, type = "cat") => {
-        console.log(e);
         let { search, time, cat } = genLocationParams();
 
         if (type == "cat" && !(e == "top" || e == "controversial")) {
@@ -121,31 +117,30 @@ export default function listing() {
                 <h2 style={{ textAlign: "center" }}>Reddit Posts</h2>
             </Header>
 
-            <Row style={{ margin: "10px" }}>
-                <Col flex={8} style={{ textAlign: 'center', padding: "5px" }}>
-                    <Select value={locationParams.cat} style={{ width: 120 }} onSelect={(e) => { handleSelect(e, "cat") }}>
-                        <Option value="hot">Hot</Option>
-                        <Option value="top">Top</Option>
-                        <Option value="rising">Rising</Option>
-                        <Option value="controversial">Controversial</Option>
-                        <Option value="new">New</Option>
-                    </Select>
-                </Col>
-                <Col flex={8} style={{ padding: "5px" }}>
-                    <Search onChange={(e) => { updateLocParams({ ...locationParams, ...{ search: e.target.value } }) }} value={locationParams.search} placeholder="Search Something" onSearch={value => handleSelect(value, "search")} enterButton />
-                </Col>
-                <Col flex={8} style={{ textAlign: "center", padding: "5px" }}>
-                    <Select disabled={!(locationParams.cat == "controversial" || locationParams.cat == "top")} onSelect={(e) => { handleSelect(e, "time") }} value={locationParams.time ? locationParams.time : "Time"} style={{ width: 120 }}>
-                        <Option value="hour">Hour ago</Option>
-                        <Option value="day">Day ago</Option>
-                        <Option value="week">Week Ago</Option>
-                        <Option value="month">Month Ago</Option>
-                    </Select>
-                </Col>
-
-            </Row>
-
             <Content style={{ padding: '0 10px' }}>
+                <Row style={{ margin: "10px" }}>
+                    <Col span={12} style={{ padding: "5px" }}>
+                        <Search onChange={(e) => { updateLocParams({ ...locationParams, ...{ search: e.target.value } }) }} value={locationParams.search} placeholder="Search Something" onSearch={value => handleSelect(value, "search")} enterButton />
+                    </Col>
+                    <Col span={12} style={{ textAlign: 'center', padding: "5px" }}>
+                        <span style={{ marginRight: "5px" }}> Sort:</span>
+                        <Select value={locationParams.cat} style={{ width: 120, marginRight: "5px" }} onSelect={(e) => { handleSelect(e, "cat") }}>
+                            <Option value="hot">Hot</Option>
+                            <Option value="top">Top</Option>
+                            <Option value="rising">Rising</Option>
+                            <Option value="controversial">Controversial</Option>
+                            <Option value="new">New</Option>
+                        </Select>
+                        <Select disabled={!(locationParams.cat == "controversial" || locationParams.cat == "top")} onSelect={(e) => { handleSelect(e, "time") }} value={locationParams.time ? locationParams.time : "Time"} style={{ width: 120 }}>
+                            <Option value="hour">An Hour ago</Option>
+                            <Option value="day">A Day ago</Option>
+                            <Option value="week">A Week Ago</Option>
+                            <Option value="month">A Month Ago</Option>
+                        </Select>
+                    </Col>
+
+                </Row>
+
 
                 {isFetching == "NF" || isFetching == "AF" ?
                     <List

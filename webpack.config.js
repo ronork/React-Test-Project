@@ -1,6 +1,5 @@
 
 var path = require('path');
-// to use path.join
 module.exports = {
     entry: './src/index.js',
     output: {

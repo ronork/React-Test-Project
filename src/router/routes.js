@@ -15,7 +15,7 @@ export default function AppRouter() {
     return (
         <Router history={history}>
             <Switch>
-                <Route exact path="/posts">
+                <Route exact path="/posts.html">
                     <Posts />
                 </Route>
             </Switch>

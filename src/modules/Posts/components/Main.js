@@ -66,7 +66,6 @@ export default function listing() {
             if (type == "locChange")
                 updateData([])
 
-            window.scrollTo(0, 0);
             toggleFetching('NF');
         }
 
@@ -87,7 +86,7 @@ export default function listing() {
         }
 
 
-        history.push(`/posts?cat=${type == "cat" ? e : cat}&search=${type == "search" ? e : search}${type == "time" ? '&time=' + e : time ? '&time=' + time : ''}`)
+        history.push(`/posts.html?cat=${type == "cat" ? e : cat}&search=${type == "search" ? e : search}${type == "time" ? '&time=' + e : time ? '&time=' + time : ''}`)
     }
 
     useEffect(() => {

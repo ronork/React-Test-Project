@@ -19,3 +19,9 @@ Generate production build
 npm run build 
 
 ```
+
+### Screenshots
+
+![Screenshot 1](https://drive.google.com/uc?export=download&id=1mP6_eWpDb6JYqRnCfe7DU1kB-4Ge1MGO)
+
+![Screenshot 2](https://drive.google.com/uc?export=download&id=1N-nK6Sq-Y2S3kAf4UDw8rcSHztC_UGp7)
